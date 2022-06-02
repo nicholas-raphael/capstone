@@ -30,6 +30,7 @@ jobs:
           name: run python lint
           command: |
             cd ..
+            ls -la
             source .capstone/bin/activate
             pylint main.py
 
