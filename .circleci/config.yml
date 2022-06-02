@@ -14,12 +14,13 @@ jobs:
   python-linting:
     docker:
       - image: python:3.7-slim
-    working_directory: ~/repo/code
+    working_directory: ~/repo
     steps:
       - checkout
       - run:
           name: install dependencies
           command: |
+            cd code
             ls -la
             pip install --upgrade pip
             python3 -m venv .capstone
