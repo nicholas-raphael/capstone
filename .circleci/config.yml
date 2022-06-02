@@ -23,7 +23,7 @@ jobs:
             ls -la
             pip install --upgrade pip
             python3 -m venv .capstone
-            . .capstone/bin/activate
+            source .capstone/bin/activate
             pip install --trusted-host pypi.python.org -r requirements/base.txt
       - run:
           name: run python lint
