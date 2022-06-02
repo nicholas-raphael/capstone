@@ -29,8 +29,8 @@ jobs:
       - run:
           name: run python lint
           command: |
-            . .capstone/bin/activate
-            pylint --disable=R,C,W1203,W1202 app.py
+            source .capstone/bin/activate
+            pylint main.py
 
 workflows:
   default:
