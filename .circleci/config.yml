@@ -14,7 +14,7 @@ jobs:
   python-linting:
     docker:
       - image: python:3.7-slim
-    working_directory: ~/repo
+    working_directory: ~/repo/code
     steps:
       - checkout
       - run:
