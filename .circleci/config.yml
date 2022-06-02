@@ -1,0 +1,17 @@
+version: 2.1
+
+jobs:
+  first-job:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout 
+      - run:
+          name: first-job
+          command: |
+            echo "first-job executed"
+
+workflows:
+  default:
+    jobs:
+      - first-job
