@@ -60,9 +60,33 @@ jobs:
             source .capstone/bin/activate
             hadolint Dockerfile
 
+  run-tests:
+    docker:
+      - image: python:3.7-slim
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run:
+          name: install dependencies
+          command: |
+            cd code
+            ls -la
+            python3 -m venv .capstone
+            source .capstone/bin/activate
+            pip install -r requirements/base.txt
+      - run:
+          name: run pytest
+          command: |
+            cd code
+            ls -la
+            source .capstone/bin/activate
+            pytest
+
+
 workflows:
   default:
     jobs:
       - first-job
       - python-linting
       - docker-linting
+      - run-tests
