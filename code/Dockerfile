@@ -3,8 +3,11 @@ FROM python:3.7-slim
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-RUN apt-get update
-RUN apt-get install -y libpq-dev python3-dev
+# hadolint ignore=DL3013
+RUN apt-get update &&\
+    apt-get install -y libpq-dev=14 python3-dev=3.7 --no-install-recommends &&\ 
+    apt-get clean &&\ 
+    rm -rf /var/lib/apt/lists/*
 
 RUN mkdir /app
 WORKDIR /app
@@ -16,8 +19,9 @@ COPY main.py /app/main.py
 COPY entrypoint.sh /app/entrypoint.sh
 
 # install dependencies
-RUN pip install --no-cache-dir --upgrade pip
-RUN pip install --no-cache-dir --trusted-host pypi.python.org -r requirements/base.txt
+# hadolint ignore=DL3013
+RUN pip install --no-cache-dir --upgrade pip &&\
+    pip install --no-cache-dir --trusted-host pypi.python.org -r requirements/base.txt
 
 RUN useradd --create-home --shell /bin/bash user
 USER user
