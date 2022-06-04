@@ -5,7 +5,7 @@ ENV PYTHONUNBUFFERED 1
 
 # hadolint ignore=DL3013
 RUN apt-get update &&\
-    apt-get install -y libpq-dev=14 python3-dev=3.7 --no-install-recommends &&\ 
+    apt-get install -y libpq-dev python3-dev --no-install-recommends &&\ 
     apt-get clean &&\ 
     rm -rf /var/lib/apt/lists/*
 
