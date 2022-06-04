@@ -109,12 +109,12 @@ jobs:
           name: Save Docker image layer cache
           command: |
             cd code
-            mkdir -p /capstone
+            mkdir -p /caches
             docker save -o /caches/capstone.tar capstone
       - save_cache:
           key: v1-{{ .Branch }}-{{ epoch }}
           paths:
-            - code/caches/capstone.tar
+            - code/caches/capstone/.tar
       - run:
           name: Upload docker image
           command: |
