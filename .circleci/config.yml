@@ -104,7 +104,7 @@ jobs:
           name: Build application Docker image
           command: |
             cd code
-            docker build --cache-from=capstone -t capstone .
+            docker build --tag=techdemowz/capstone:latest --cache-from=capstone -t capstone .
       - run:
           name: Save Docker image layer cache
           command: |
