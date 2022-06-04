@@ -93,13 +93,13 @@ jobs:
           keys:
             - v1-{{ .Branch }}
           paths:
-            - code/caches/app.tar
+            - code/caches/capstone.tar
       - run:
           name: Load Docker image layer cache
           command: |
             cd code
             set +o pipefail
-            docker load -i /caches/app.tar | true
+            docker load -i /caches/capstone.tar | true
       - run:
           name: Build application Docker image
           command: |
@@ -109,12 +109,12 @@ jobs:
           name: Save Docker image layer cache
           command: |
             cd code
-            mkdir -p /caches
-            docker save -o /caches/app.tar app
+            mkdir -p /capstone
+            docker save -o /caches/capstone.tar capstone
       - save_cache:
           key: v1-{{ .Branch }}-{{ epoch }}
           paths:
-            - code/caches/app.tar
+            - code/caches/capstone.tar
       - run:
           name: Upload docker image
           command: |
