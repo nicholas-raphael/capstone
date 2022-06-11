@@ -1,0 +1,56 @@
+      
+  - name: "Install Kubectl"
+    shell: |
+        curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
+        chmod +x kubectl
+        sudo mv kubectl  /usr/local/bin/
+        kubectl version --client -o json
+  - name: "Install Docker"
+    shell: |
+        #sudo apt install docker.io
+        #sudo apt-get install -y docker.io
+        sudo apt-get update && sudo apt-get install docker.io -y
+    
+  - name: "Install Minikube"
+    shell: |
+        wget https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+        chmod +x minikube-linux-amd64
+        sudo mv minikube-linux-amd64 /usr/local/bin/minikube
+        minikube version
+  - name: "Add user for Minikube"
+    shell: |
+        sudo groupadd docker
+        sudo gpasswd -a $USER docker
+        
+  - name: "Start Minikube"
+    shell: |
+        minikube start --driver=docker
+  - name: "Kubernetes Run"
+    shell: |
+        docker pull techdemowz/capstone:latest      
+        kubectl run capstone --image=techdemowz/capstone --port=8000 --labels app=capstone
+       
+  - name: "wait 20 seconds for target connection to become reachable/usable."
+    wait_for_connection: 
+        delay: 20
+
+  # if smoke test failed with curl: (56) Recv failure: Connection reset by peer
+  # SSH to EC2 instance terminal 
+  # Run curl soon after this step "Kubernetes Port forwward" is finished in CircleCI 
+  # Obtain instance's public IP and run >1 curl http://xxx.xxx.xxx.xxx:8000
+  # Terminal will show failure curl: (7) or curl: (56)
+  # Rerun the following nohup command in terminal
+  # Run curl again, it should be successful
+
+  - name: "Kubernetes Port forwward"
+    shell: |
+        nohup kubectl port-forward capstone 8000:8000 --address='0.0.0.0' --pod-running-timeout=15m0s &
+    register: record_nohup_output
+
+  - name: print nohup output
+    debug:
+      msg: "{{ record_nohup_output.stdout_lines }}"
+      
+  - name: "wait 60 seconds for target connection to become reachable/usable."
+    wait_for_connection: 
+        delay: 60

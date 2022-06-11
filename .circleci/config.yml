@@ -156,6 +156,27 @@ jobs:
           paths:
             - project/.circleci/ansible/inventory.txt
 
+  configure-infrastructure:
+    docker:
+      - image: python:3.7-slim
+    steps:
+      - checkout
+      - add_ssh_keys:
+           fingerprints: ["78:eb:55:9e:f4:f5:c6:d9:dc:f2:b0:5b:a5:9b:8c:0d"]
+      - attach_workspace:    
+         at: ~/   
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update tar gzip ansible nodejs npm curl
+            pip install awscli 
+      - run:
+          name: Configure server with ansible
+          command: |
+            cd .circleci/ansible
+            cat inventory.txt
+            ansible-playbook -i inventory.txt configure-server.yml
+
 workflows:
   default:
     jobs:
@@ -166,4 +187,5 @@ workflows:
       #- build-docker-img:
       #    requires: [first-job, python-linting, docker-linting, run-tests]
       - deploy-infrastructure
-          #requires: [build-docker-img]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
