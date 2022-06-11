@@ -154,16 +154,16 @@ jobs:
       - persist_to_workspace:
           root: ~/
           paths:
-            - /project/code/.circleci/ansible/inventory.txt
+            - project/code/.circleci/ansible/inventory.txt
 
 workflows:
   default:
     jobs:
-      - first-job
-      - python-linting
-      - docker-linting
-      - run-tests
-      - build-docker-img:
-          requires: [first-job, python-linting, docker-linting, run-tests]
-      - deploy-infrastructure:
-          requires: [build-docker-img]
+      #- first-job
+      #- python-linting
+      #- docker-linting
+      #- run-tests
+      #- build-docker-img:
+      #    requires: [first-job, python-linting, docker-linting, run-tests]
+      - deploy-infrastructure
+          #requires: [build-docker-img]
