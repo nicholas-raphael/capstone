@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 
 aws
+udacity.pem
 
 .capstone
 # C extensions
