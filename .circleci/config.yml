@@ -133,7 +133,6 @@ jobs:
       - run:
           name: Ensure back-end infrastructure exists
           command: |
-            cd code
             ls -la
             aws cloudformation deploy \
               --template-file .circleci/files/backend.yml \
@@ -144,7 +143,7 @@ jobs:
       - run:
           name: Add EC2 ip to ansible inventory
           command: |
-            cd code
+            ls -la
             yum -y install tar gzip
             aws ec2 describe-instances \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
