@@ -184,8 +184,7 @@ workflows:
       #- python-linting
       #- docker-linting
       #- run-tests
-      #- build-docker-img:
-      #    requires: [first-job, python-linting, docker-linting, run-tests]
-      - deploy-infrastructure
-      - configure-infrastructure:
-          requires: [deploy-infrastructure]
+      - build-docker-img
+      #- deploy-infrastructure
+      #- configure-infrastructure:
+      #    requires: [deploy-infrastructure]
