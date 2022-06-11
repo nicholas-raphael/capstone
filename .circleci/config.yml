@@ -122,6 +122,40 @@ jobs:
             docker login -u=techdemowz -p=Comipems01
             docker push techdemowz/capstone:latest
 
+  deploy-infrastructure:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: Install tar
+          command: yum install -y tar gzip   
+      - run:
+          name: Ensure back-end infrastructure exists
+          command: |
+            cd code
+            aws cloudformation deploy \
+              --template-file .circleci/files/backend.yml \
+              --tags project=capstone \
+              --stack-name "capstone-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
+      
+      - run:
+          name: Add EC2 ip to ansible inventory
+          command: |
+            cd code
+            yum -y install tar gzip
+            aws ec2 describe-instances \
+            --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            --filters "Name=tag:Name,Values=capstone-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+            --output text >> ~/project/code/.circleci/ansible/inventory.txt
+            cat ~/project/code/.circleci/ansible/inventory.txt
+            echo ${CIRCLE_WORKFLOW_ID:0:7}
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - ~/project/code/.circleci/ansible/inventory.txt
+
 workflows:
   default:
     jobs:
@@ -131,3 +165,5 @@ workflows:
       - run-tests
       - build-docker-img:
           requires: [first-job, python-linting, docker-linting, run-tests]
+      - deploy-infrastructure:
+          requires: [build-docker-img]
