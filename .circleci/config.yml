@@ -194,6 +194,7 @@ jobs:
             export STACK_LIST=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" --stack-status-filter CREATE_COMPLETE --no-paginate --output text))
             for stack in ${STACKS[@]}; do
               echo "$stack"
+            done
       
 
 workflows:
