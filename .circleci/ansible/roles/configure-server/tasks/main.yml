@@ -28,7 +28,7 @@
   - name: "Kubernetes Run"
     shell: |
         docker pull techdemowz/capstone:latest      
-        kubectl run capstone --image=techdemowz/capstone --port=80 --labels app=capstone
+        kubectl run capstone --image=techdemowz/capstone --port=8000 --labels app=capstone
        
   - name: "wait 20 seconds for target connection to become reachable/usable."
     wait_for_connection: 
@@ -44,7 +44,7 @@
 
   - name: "Kubernetes Port forwward"
     shell: |
-        nohup kubectl port-forward capstone 80:80 --address='0.0.0.0' --pod-running-timeout=15m0s &
+        nohup kubectl port-forward capstone 8000:8000 --address='0.0.0.0' --pod-running-timeout=15m0s &
     register: record_nohup_output
 
   - name: print nohup output
