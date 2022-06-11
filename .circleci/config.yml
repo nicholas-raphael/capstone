@@ -183,17 +183,17 @@ jobs:
     steps:
       - checkout
       - run:
-        name: Install dependencies
-        command: |
-          yum -y install tar gzip 
+          name: Install dependencies
+          command: |
+            yum -y install tar gzip 
       - attach_workspace:
           at: ~/
       - run:
-        name: Destroy old deployments 
-        command: |
-          export STACK_LIST=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" --stack-status-filter CREATE_COMPLETE --no-paginate --output text))
-          for stack in ${STACKS[@]}; do
-            echo "$stack"
+          name: Destroy old deployments 
+          command: |
+            export STACK_LIST=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" --stack-status-filter CREATE_COMPLETE --no-paginate --output text))
+            for stack in ${STACKS[@]}; do
+              echo "$stack"
       
 
 workflows:
