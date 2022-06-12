@@ -241,7 +241,7 @@ workflows:
           requires: [build-docker-img]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
-      - smoke-test
+      - smoke-test:
           requires: [configure-infrastructure]
       - promote-deployment:
           requires: [smoke-test]
