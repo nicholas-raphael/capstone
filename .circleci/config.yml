@@ -194,6 +194,12 @@ jobs:
             for stack in $(aws cloudformation list-stacks --query "StackSummaries[*].StackName" --stack-status-filter CREATE_COMPLETE --no-paginate --output text)
             do
               echo "$stack"
+              if [[ $stack == *"capstone-${CIRCLE_WORKFLOW_ID:0:7}"* ]]
+                then
+                  echo "$stack is the same"
+              else 
+                  echo "$stack is not the same"
+                fi
             done
       
 
