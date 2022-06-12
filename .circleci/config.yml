@@ -245,7 +245,7 @@ workflows:
     jobs:
       - python-linting
       - docker-linting
-      - run-tests
+      - run-tests:
           requires: [python-linting, docker-linting]
       - build-docker-img:
           requires: [run-tests]
