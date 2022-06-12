@@ -1,16 +1,21 @@
 version: 2.1
 
-jobs:
-  first-job:
-    docker:
-      - image: cimg/base:stable
+commands:
+  destroy-environment:
+    description: Destroy cloudformation stack
+    parameters:
+      workflow-id:
+        type: string
+        default: ${CIRCLE_WORKFLOW_ID:0:7}
     steps:
-      - checkout 
       - run:
-          name: first-job
+          name: Destroy environments
+          when: on_fail
           command: |
-            echo "first-job executed"
+            aws cloudformation delete-stack --stack-name capstone-<<parameters.workflow-id>>
 
+
+jobs:
   python-linting:
     working_directory: ~/repo
     docker:
@@ -138,8 +143,7 @@ jobs:
               --template-file .circleci/files/backend.yml \
               --tags project=capstone \
               --stack-name "capstone-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
-      
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"   
       - run:
           name: Add EC2 ip to ansible inventory
           command: |
@@ -155,6 +159,8 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
+      - destroy-environment:
+          workflow-id: "${CIRCLE_WORKFLOW_ID}"
 
   configure-infrastructure:
     docker:
@@ -176,6 +182,8 @@ jobs:
             cd .circleci/ansible
             cat inventory.txt
             ansible-playbook -i inventory.txt configure-server.yml
+      - destroy-environment:
+          workflow-id: "${CIRCLE_WORKFLOW_ID}"
 
   smoke-test:
     docker:
@@ -195,12 +203,14 @@ jobs:
             export BACKEND_URL="http://${EC2_IP}:8000"
             echo "${BACKEND_URL}"
             sleep 60
-            if curl "${API_URL}" | grep "Hello"
+            if curl "${BACKEND_URL}" | grep "Hello"
             then
                 return 0
             else
                 return 1
             fi
+      - destroy-environment:
+          workflow-id: "${CIRCLE_WORKFLOW_ID}"
 
   promote-deployment:
     docker:
@@ -227,16 +237,18 @@ jobs:
                   aws cloudformation delete-stack --stack-name "$stack"
                 fi
             done
+      - destroy-environment:
+          workflow-id: "${CIRCLE_WORKFLOW_ID}"
 
 workflows:
   default:
     jobs:
-      #- first-job
       - python-linting
       - docker-linting
       - run-tests
+          requires: [python-linting, docker-linting]
       - build-docker-img:
-          requires: [python-linting, docker-linting, run-tests]
+          requires: [run-tests]
       - deploy-infrastructure:
           requires: [build-docker-img]
       - configure-infrastructure:

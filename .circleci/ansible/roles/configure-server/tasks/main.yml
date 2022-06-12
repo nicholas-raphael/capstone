@@ -30,18 +30,14 @@
         docker pull techdemowz/capstone:latest      
         kubectl run capstone --image=techdemowz/capstone --port=8000 --labels app=capstone
        
-  - name: "wait 20 seconds for target connection to become reachable/usable."
+  - name: "wait 60 seconds for target connection to become reachable/usable."
     wait_for_connection: 
-        delay: 20
+        delay: 60
 
   - name: "Kubernetes Port forwward"
     shell: |
-        nohup kubectl port-forward capstone 8000:8000 --address='0.0.0.0' --pod-running-timeout=15m0s &
+        nohup kubectl port-forward capstone 8000:8000 --address='0.0.0.0' --pod-running-timeout=10m0s&
     register: record_nohup_output
-
-  - name: print nohup output
-    debug:
-      msg: "{{ record_nohup_output.stdout_lines }}"
       
   - name: "wait 60 seconds for target connection to become reachable/usable."
     wait_for_connection: 
