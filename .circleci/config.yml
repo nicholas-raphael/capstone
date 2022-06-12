@@ -185,9 +185,9 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            sudo apt-get -y -qq update
-            sudo apt-get -y -qq install tar gzip curl
-            sudo apt-get -qq install awscli
+            apt-get -y -qq update
+            apt-get -y -qq install tar gzip curl
+            apt-get -qq install awscli
       - run:
           name: Make test request 
           command: |
