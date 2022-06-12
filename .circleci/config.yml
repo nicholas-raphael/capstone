@@ -177,6 +177,30 @@ jobs:
             cat inventory.txt
             ansible-playbook -i inventory.txt configure-server.yml
 
+  smoke-test:
+    docker:
+      - image: python:3.7-slim
+    steps:
+      - checkout 
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update tar gzip curl
+            pip install awscli
+      - run:
+          name: Make test request 
+          command: |
+            export EC2_IP=$(aws ec2 describe-instances --query "Reservations[*].Instances[*].PublicIpAddress" --filters "Name=tag:Name,Values=capstone-backend-${CIRCLE_WORKFLOW_ID:0:7}" --output=text)
+            export BACKEND_URL="http://${EC2_IP}:8000"
+            echo "${BACKEND_URL}"
+            sleep 60
+            if curl "${API_URL}" | grep "Hello"
+            then
+                return 0
+            else
+                return 1
+            fi
+
   promote-deployment:
     docker:
       - image: amazon/aws-cli
@@ -202,17 +226,21 @@ jobs:
                   aws cloudformation delete-stack --stack-name "$stack"
                 fi
             done
-      
 
 workflows:
   default:
     jobs:
-      #- first-job
-      #- python-linting
-      #- docker-linting
-      #- run-tests
-      #- build-docker-img
-      #- deploy-infrastructure
-      #- configure-infrastructure:
-      #    requires: [deploy-infrastructure]
-      - promote-deployment
+      - first-job
+      - python-linting
+      - docker-linting
+      - run-tests
+      - build-docker-img:
+          requires: [python-linting, docker-linting, run-tests]
+      - deploy-infrastructure:
+          requires: [build-docker-img]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
+      - smoke-test:
+          requires: [configure-infrastructure]
+      - promote-deployment:
+          requires: [promote-deployment]
