@@ -185,8 +185,9 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update tar gzip curl
-            pip install awscli
+            sudo apt-get -y -qq update
+            sudo apt-get -y -qq install tar gzip curl
+            sudo apt-get -qq install awscli
       - run:
           name: Make test request 
           command: |
@@ -230,17 +231,17 @@ jobs:
 workflows:
   default:
     jobs:
-      - first-job
-      - python-linting
-      - docker-linting
-      - run-tests
-      - build-docker-img:
-          requires: [python-linting, docker-linting, run-tests]
-      - deploy-infrastructure:
-          requires: [build-docker-img]
-      - configure-infrastructure:
-          requires: [deploy-infrastructure]
-      - smoke-test:
-          requires: [configure-infrastructure]
-      - promote-deployment:
-          requires: [smoke-test]
+      #- first-job
+      #- python-linting
+      #- docker-linting
+      #- run-tests
+      #- build-docker-img:
+      #    requires: [python-linting, docker-linting, run-tests]
+      #- deploy-infrastructure:
+      #    requires: [build-docker-img]
+      #- configure-infrastructure:
+      #    requires: [deploy-infrastructure]
+      - smoke-test
+      #    requires: [configure-infrastructure]
+      #- promote-deployment:
+      #    requires: [smoke-test]
