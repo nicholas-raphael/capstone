@@ -243,4 +243,4 @@ workflows:
       - smoke-test:
           requires: [configure-infrastructure]
       - promote-deployment:
-          requires: [promote-deployment]
+          requires: [smoke-test]
