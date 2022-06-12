@@ -192,7 +192,7 @@ jobs:
           name: Destroy old deployments 
           command: |
             for stack in $(aws cloudformation list-stacks --query "StackSummaries[*].StackName" --stack-status-filter CREATE_COMPLETE --no-paginate --output text) do
-              echo $stack
+              echo "$stack"
             done
       
 
