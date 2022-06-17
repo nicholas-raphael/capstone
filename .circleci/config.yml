@@ -29,8 +29,8 @@ jobs:
       - run:
           name: Make test request 
           command: |
-            export BACKEND_URL="https://google.com"
-            if curl -s ${BACKEND_URL} | grep "Google"
+            export BACKEND_URL="https://555e-2806-105e-1d-aea-9cf8-1a02-2813-af46.ngrok.io"
+            if curl -s ${BACKEND_URL} | grep "Hello"
               then
                 return 0
             else
