@@ -194,6 +194,7 @@ jobs:
           name: Install dependencies
           command: |
             apk add tar gzip curl
+            pip install awscli
       - run:
           name: Make test request 
           command: |
