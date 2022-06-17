@@ -16,26 +16,6 @@ commands:
 
 
 jobs:
-
-  test-curl:
-    docker:
-      - image: python:3.7-alpine3.11
-    steps:
-      - checkout 
-      - run:
-          name: Install dependencies
-          command: |
-            apk add tar gzip curl
-      - run:
-          name: Make test request 
-          command: |
-            export BACKEND_URL="https://555e-2806-105e-1d-aea-9cf8-1a02-2813-af46.ngrok.io"
-            if curl -s ${BACKEND_URL} | grep "Hello"
-              then
-                return 0
-            else
-              return 1
-            fi
   python-linting:
     working_directory: ~/
     docker:
@@ -207,15 +187,13 @@ jobs:
 
   smoke-test:
     docker:
-      - image: python:3.7-slim
+      - image: python:3.7-alpine3.11
     steps:
       - checkout 
       - run:
           name: Install dependencies
           command: |
-            apt-get -y -qq update
-            apt-get -y -qq install tar gzip curl
-            apt-get -qq install awscli
+            apk add tar gzip curl
       - run:
           name: Make test request 
           command: |
@@ -263,18 +241,17 @@ jobs:
 workflows:
   default:
     jobs:
-      - test-curl
-      #- python-linting
-      #- docker-linting
-      #- run-tests:
-      #    requires: [python-linting, docker-linting]
-      #- build-docker-img:
-      #    requires: [run-tests]
-      #- deploy-infrastructure:
-      #    requires: [build-docker-img]
-      #- configure-infrastructure:
-      #    requires: [deploy-infrastructure]
-      #- smoke-test:
-      #    requires: [configure-infrastructure]
-      #- promote-deployment:
-      #    requires: [smoke-test]
+      - python-linting
+      - docker-linting
+      - run-tests:
+          requires: [python-linting, docker-linting]
+      - build-docker-img:
+          requires: [run-tests]
+      - deploy-infrastructure:
+          requires: [build-docker-img]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
+      - smoke-test:
+          requires: [configure-infrastructure]
+      - promote-deployment:
+          requires: [smoke-test]
