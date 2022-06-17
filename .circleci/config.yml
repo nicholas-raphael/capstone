@@ -16,8 +16,30 @@ commands:
 
 
 jobs:
+
+  test-curl:
+    docker:
+      - image: python:3.7-slim
+    steps:
+      - checkout 
+      - run:
+          name: Install dependencies
+          command: |
+            apt-get -y -qq update
+            apt-get -y -qq install tar gzip curl
+            apt-get -qq install awscli
+      - run:
+          name: Make test request 
+          command: |
+            export BACKEND_URL="https://google.com"
+            if curl -s ${URL} | grep "Google"
+              then
+                return 0
+            else
+              return 1
+            fi
   python-linting:
-    working_directory: ~/repo
+    working_directory: ~/
     docker:
       - image: python:3.7-slim
     steps:
@@ -243,17 +265,18 @@ jobs:
 workflows:
   default:
     jobs:
-      - python-linting
-      - docker-linting
-      - run-tests:
-          requires: [python-linting, docker-linting]
-      - build-docker-img:
-          requires: [run-tests]
-      - deploy-infrastructure:
-          requires: [build-docker-img]
-      - configure-infrastructure:
-          requires: [deploy-infrastructure]
-      - smoke-test:
-          requires: [configure-infrastructure]
-      - promote-deployment:
-          requires: [smoke-test]
+      - test-curl
+      #- python-linting
+      #- docker-linting
+      #- run-tests:
+      #    requires: [python-linting, docker-linting]
+      #- build-docker-img:
+      #    requires: [run-tests]
+      #- deploy-infrastructure:
+      #    requires: [build-docker-img]
+      #- configure-infrastructure:
+      #    requires: [deploy-infrastructure]
+      #- smoke-test:
+      #    requires: [configure-infrastructure]
+      #- promote-deployment:
+      #    requires: [smoke-test]
