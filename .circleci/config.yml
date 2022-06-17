@@ -32,7 +32,7 @@ jobs:
           name: Make test request 
           command: |
             export BACKEND_URL="https://google.com"
-            if curl -s ${URL} | grep "Google"
+            if curl -s ${BACKEND_URL} | grep "Google"
               then
                 return 0
             else
