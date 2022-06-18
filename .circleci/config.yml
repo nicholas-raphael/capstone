@@ -139,7 +139,9 @@ jobs:
           name: Ensure back-end infrastructure exists
           command: |
             ls -la
-            if [ "o" == "u" ]; then
+            export STATUS=$(aws ec2 describe-instances --region us-east-2 --filters "Name=tag:Name,Values=capstone-backend" --query "Reservations[*].Instances[*].[State.Name]" --output text)
+            echo $STATUS
+            if [ "$STATUS" == "u" ]; then
               aws cloudformation deploy \
                 --template-file .circleci/files/backend.yml \
                 --tags project=capstone \
@@ -150,7 +152,9 @@ jobs:
           name: Add EC2 ip to ansible inventory
           command: |
             ls -la
-            if [ "o" == "u" ]; then
+            export STATUS=$(aws ec2 describe-instances --region us-east-2 --filters "Name=tag:Name,Values=capstone-backend" --query "Reservations[*].Instances[*].[State.Name]" --output text)
+            echo $STATUS
+            if [ "$STATUS" == "u" ]; then
               yum -y install tar gzip
               aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
@@ -183,9 +187,11 @@ jobs:
       - run:
           name: Configure server with ansible
           command: |
+            export STATUS=$(aws ec2 describe-instances --region us-east-2 --filters "Name=tag:Name,Values=capstone-backend" --query "Reservations[*].Instances[*].[State.Name]" --output text)
+            echo $STATUS
             cd .circleci/ansible
             cat inventory.txt
-            if [ "o" == "u" ]; then
+            if [ "$STATUS" == "u" ]; then
               ansible-playbook -i inventory.txt configure-server.yml
             fi
       - destroy-environment:
