@@ -139,22 +139,26 @@ jobs:
           name: Ensure back-end infrastructure exists
           command: |
             ls -la
-            aws cloudformation deploy \
-              --template-file .circleci/files/backend.yml \
-              --tags project=capstone \
-              --stack-name "capstone-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"   
+            if [ "o" == "u" ]; then
+              aws cloudformation deploy \
+                --template-file .circleci/files/backend.yml \
+                --tags project=capstone \
+                --stack-name "capstone-${CIRCLE_WORKFLOW_ID:0:7}" \
+                --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
+            fi
       - run:
           name: Add EC2 ip to ansible inventory
           command: |
             ls -la
-            yum -y install tar gzip
-            aws ec2 describe-instances \
-            --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            --filters "Name=tag:Name,Values=capstone-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-            --output text >> ~/project/.circleci/ansible/inventory.txt
-            cat ~/project/.circleci/ansible/inventory.txt
-            echo ${CIRCLE_WORKFLOW_ID:0:7}
+            if [ "o" == "u" ]; then
+              yum -y install tar gzip
+              aws ec2 describe-instances \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --filters "Name=tag:Name,Values=capstone-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --output text >> ~/project/.circleci/ansible/inventory.txt
+              cat ~/project/.circleci/ansible/inventory.txt
+              echo ${CIRCLE_WORKFLOW_ID:0:7}
+            fi
       - persist_to_workspace:
           root: ~/
           paths:
@@ -181,7 +185,9 @@ jobs:
           command: |
             cd .circleci/ansible
             cat inventory.txt
-            ansible-playbook -i inventory.txt configure-server.yml
+            if [ "o" == "u" ]; then
+              ansible-playbook -i inventory.txt configure-server.yml
+            fi
       - destroy-environment:
           workflow-id: "${CIRCLE_WORKFLOW_ID:0:7}"
 
