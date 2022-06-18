@@ -192,7 +192,10 @@ jobs:
             cd .circleci/ansible
             cat inventory.txt
             if [ "$STATUS" == "u" ]; then
+              echo "CREATE PLAYBOOK"
               ansible-playbook -i inventory.txt configure-server.yml
+            else
+              echo "CHANGE PLAYBOOK"
             fi
       - destroy-environment:
           workflow-id: "${CIRCLE_WORKFLOW_ID:0:7}"
