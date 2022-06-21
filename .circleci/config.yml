@@ -226,33 +226,6 @@ jobs:
       - destroy-environment:
           workflow-id: "${CIRCLE_WORKFLOW_ID:0:7}"
 
-  promote-deployment:
-    docker:
-      - image: amazon/aws-cli
-    steps:
-      - checkout
-      - run:
-          name: Install dependencies
-          command: |
-            yum -y install tar gzip 
-      - attach_workspace:
-          at: ~/
-      - run:
-          name: Destroy old deployments 
-          command: |
-            for stack in $(aws cloudformation list-stacks --query "StackSummaries[*].StackName" --stack-status-filter CREATE_COMPLETE --no-paginate --output text)
-            do
-              echo "$stack"
-              if [[ $stack == *"capstone-${CIRCLE_WORKFLOW_ID:0:7}"* ]]
-                then
-                  echo "$stack is the same"
-              else 
-                  echo "$stack is not the same"
-                  aws cloudformation delete-stack --stack-name "$stack"
-                fi
-            done
-      - destroy-environment:
-          workflow-id: "${CIRCLE_WORKFLOW_ID:0:7}"
 
 workflows:
   default:
@@ -263,11 +236,7 @@ workflows:
           requires: [python-linting, docker-linting]
       - build-docker-img:
           requires: [run-tests]
-      #- deploy-infrastructure:
-      #    requires: [build-docker-img]
-      #- configure-infrastructure:
-      #    requires: [deploy-infrastructure]
-      #- smoke-test:
-      #    requires: [configure-infrastructure]
-      #- promote-deployment:
-      #    requires: [smoke-test]
+      - deploy-infrastructure:
+          requires: [build-docker-img]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
