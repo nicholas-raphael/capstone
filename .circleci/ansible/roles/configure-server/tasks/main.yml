@@ -27,7 +27,7 @@
         minikube start --driver=docker
   - name: "Kubernetes Run"
     shell: |
-        docker pull techdemowz/capstone:latest      
+        docker pull techdemowz/capstone:latest
         kubectl run capstone --image=techdemowz/capstone --port=8000 --labels app=capstone
        
   - name: "wait 60 seconds for target connection to become reachable/usable."

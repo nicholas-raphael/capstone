@@ -6,4 +6,4 @@ app = FastAPI()
 @app.get("/")
 def root():
     """Root endpoint"""
-    return {"Hello": "World"}
+    return {"Hello": "Tanjiro V2"}
