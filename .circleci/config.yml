@@ -139,7 +139,7 @@ jobs:
           name: Ensure back-end infrastructure exists
           command: |
             ls -la
-            export STATUS=$(aws ec2 describe-instances --region us-east-2 --filters "Name=tag:Name,Values=capstone-backend" --query "Reservations[*].Instances[*].[State.Name]" --output text)
+            export STATUS=$(aws ec2 describe-instances --region us-east-2 --filters "Name=tag:project,Values=capstone" --query "Reservations[*].Instances[*].[State.Name]" --output text)
             echo $STATUS
             if [ ! $STATUS ]; then
               aws cloudformation deploy \
@@ -183,7 +183,7 @@ jobs:
       - run:
           name: Configure server with ansible
           command: |
-            export STATUS=$(aws ec2 describe-instances --region us-east-2 --filters "Name=tag:Name,Values=capstone-backend" --query "Reservations[*].Instances[*].[State.Name]" --output text)
+            export STATUS=$(aws ec2 describe-instances --region us-east-2 --filters "Name=tag:project,Values=capstone" --query "Reservations[*].Instances[*].[State.Name]" --output text)
             echo $STATUS
             cd .circleci/ansible
             cat inventory.txt
