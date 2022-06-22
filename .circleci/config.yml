@@ -191,7 +191,7 @@ jobs:
               echo "CREATE PLAYBOOK"
               ansible-playbook -i inventory.txt configure-server.yml
             else
-              echo "CHANGE PLAYBOOK"
+              ansible-playbook -i inventory.txt update-server.yml
             fi
 
   smoke-test:
