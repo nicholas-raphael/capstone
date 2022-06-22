@@ -7,3 +7,6 @@ nohup kubectl port-forward capstone 8000:8000 --address='0.0.0.0' --pod-running-
 SAVE:
 
 kubectl run capstone --image=techdemowz/capstone --port=8000 --labels app=capstone
+
+
+nohup kubectl port-forward capstone 8000:8000 --address='0.0.0.0' --pod-running-timeout=10m0s&

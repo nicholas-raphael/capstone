@@ -16,6 +16,7 @@ WORKDIR /app
 COPY __init__.py /app/__init__.py
 COPY requirements /app/requirements
 COPY main.py /app/main.py
+COPY deployment.yml deployment.yml
 COPY entrypoint.sh /app/entrypoint.sh
 
 # install dependencies
