@@ -193,8 +193,6 @@ jobs:
             else
               echo "CHANGE PLAYBOOK"
             fi
-      - destroy-environment:
-          workflow-id: "${CIRCLE_WORKFLOW_ID:0:7}"
 
   smoke-test:
     docker:
