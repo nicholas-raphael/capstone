@@ -2,7 +2,7 @@
     become: yes
     copy:
       src: ~/project/code/deployment.yml
-      dest: /home/deployment.yml
+      dest: /home/ubuntu/deployment.yml
   - name: "ls"
     shell: |
         ls
