@@ -1,6 +1,9 @@
   - name: "update kubernetes with latest image"
     shell: |
       kubectl rollout restart deployment/capstone    
+  - name: "forward deployment ports"
+    shell: |
+      nohup kubectl port-forward deployment/capstone 8000:8000 --address='0.0.0.0' --pod-running-timeout=10m0s
   - name: "wait 60 seconds for target connection to become reachable/usable."
     wait_for_connection: 
         delay: 60
