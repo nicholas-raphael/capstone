@@ -37,3 +37,5 @@ Resources:
       Tags:    
         - Key: Name
           Value: !Sub capstone-backend-${ID}
+        - Key: Type
+          Value: !Sub capstone-backend

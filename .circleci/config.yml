@@ -139,12 +139,11 @@ jobs:
           name: Ensure back-end infrastructure exists
           command: |
             ls -la
-            export STATUS=$(aws ec2 describe-instances --region us-east-2 --filters "Name=tag:project,Values=capstone" --query "Reservations[*].Instances[*].[State.Name]" --output text)
+            export STATUS=$(aws ec2 describe-instances --region us-east-2 --filters "Name=tag:Type,Values=capstone-backend" --query "Reservations[*].Instances[*].[State.Name]" --output text)
             echo $STATUS
             if [ ! $STATUS ]; then
               aws cloudformation deploy \
                 --template-file .circleci/files/backend.yml \
-                --tags project=capstone \
                 --stack-name "capstone-${CIRCLE_WORKFLOW_ID:0:7}" \
                 --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
             fi
@@ -155,7 +154,7 @@ jobs:
             yum -y install tar gzip
             aws ec2 describe-instances \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            --filters "Name=tag:Name,Values=capstone-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+            --filters "Name=tag:Type,Values=capstone-backend" \
             --output text >> ~/project/.circleci/ansible/inventory.txt
             cat ~/project/.circleci/ansible/inventory.txt
             echo ${CIRCLE_WORKFLOW_ID:0:7}
@@ -183,7 +182,7 @@ jobs:
       - run:
           name: Configure server with ansible
           command: |
-            export STATUS=$(aws ec2 describe-instances --region us-east-2 --filters "Name=tag:project,Values=capstone" --query "Reservations[*].Instances[*].[State.Name]" --output text)
+            export STATUS=$(aws ec2 describe-instances --region us-east-2 --filters "Name=tag:Type,Values=capstone-backend" --query "Reservations[*].Instances[*].[State.Name]" --output text)
             echo $STATUS
             cd .circleci/ansible
             cat inventory.txt
