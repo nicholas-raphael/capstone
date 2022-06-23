@@ -206,7 +206,7 @@ jobs:
       - run:
           name: Make test request 
           command: |
-            export EC2_IP=$(aws ec2 describe-instances --query "Reservations[*].Instances[*].PublicIpAddress" --filters "Name=tag:Name,Values=capstone-backend-${CIRCLE_WORKFLOW_ID:0:7}" --output=text)
+            export EC2_IP=$(aws ec2 describe-instances --query "Reservations[*].Instances[*].PublicIpAddress" --filters "Name=tag:Type,Values=capstone-backend" --output=text)
             export BACKEND_URL="http://${EC2_IP}:8000"
             echo "${BACKEND_URL}"
             sleep 60
