@@ -1,17 +1,9 @@
-
+"""Sample API for capstone project"""
 from fastapi import FastAPI
-
-
-
 
 app = FastAPI()
 
-
-
-
 @app.get("/")
-
-
-
 def root():
-    return {"Hello": "World :D"}
+    """Root endpoint"""
+    return {"Hello": "World"}
